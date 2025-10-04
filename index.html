@@ -122,6 +122,30 @@
       brideFamilies.style.display='none';
       mainContainer.style.display='block';
     };
+   // handle click sa bride button
+brideBtn.addEventListener('click', () => {
+  mainContainer.style.display = 'none';
+  brideFamilies.style.display = 'block';
+});
+
+// handle click sa mga family buttons
+document.querySelectorAll('.family-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const family = btn.getAttribute('data-family');
+    const videoSrc = videos[family];
+    if (videoSrc) {
+      reservedVideo.src = videoSrc;
+      modal.style.display = 'flex';
+    }
+  });
+});
+
+// handle close modal
+closeSheet.addEventListener('click', () => {
+  modal.style.display = 'none';
+  reservedVideo.pause();
+});
   </script>
 </body>
 </html>
+

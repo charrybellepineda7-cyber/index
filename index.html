@@ -94,117 +94,132 @@
   </div>
 
   <script>
-    const videos = {
-      "Eddie's Family": "reservation9.mp4",
-      "Ali's Family": "reservation8.mp4",
-      "Elizer's Family": "reservation6.mp4",
-      "Val's Family": "reservation4.mp4",
-      "Vito's Family": "reservation7.mp4",
-      "Jun's Family": "reservation6.mp4",
-      "Evelyn's Family": "reservation4.mp4",
-      "Gamay's Family": "reservation17.mp4",
-      "Neneng's Family": "reservation11.mp4",
-      "Natividad's Family": "reservation14.mp4",
-      "Benjamin's Family": "reservation14.mp4"
-    };
+  const videos = {
+    "Eddie's Family": "reservation9.mp4",
+    "Ali's Family": "reservation8.mp4",
+    "Elizer's Family": "reservation6.mp4",
+    "Val's Family": "reservation4.mp4",
+    "Vito's Family": "reservation7.mp4",
+    "Jun's Family": "reservation6.mp4",
+    "Evelyn's Family": "reservation4.mp4",
+    "Gamay's Family": "reservation17.mp4",
+    "Neneng's Family": "reservation11.mp4",
+    "Natividad's Family": "reservation14.mp4",
+    "Benjamin's Family": "reservation14.mp4"
+  };
 
-    const brideBtn=document.getElementById('brideBtn');
-    const groomBtn=document.getElementById('groomBtn');
-    const friendsBtn=document.getElementById('friendsBtn');
-    const brideFamilies=document.getElementById('brideFamilies');
-    const mainContainer=document.getElementById('mainContainer');
-    const modal=document.getElementById('modal');
-    const reservedVideo=document.getElementById('reservedVideo');
-    const closeSheet=document.getElementById('closeSheet');
+  const brideBtn = document.getElementById('brideBtn');
+  const groomBtn = document.getElementById('groomBtn');
+  const friendsBtn = document.getElementById('friendsBtn');
+  const brideFamilies = document.getElementById('brideFamilies');
+  const mainContainer = document.getElementById('mainContainer');
+  const modal = document.getElementById('modal');
+  const reservedVideo = document.getElementById('reservedVideo');
+  const closeSheet = document.getElementById('closeSheet');
 
-    // RSVP elements
-    const rsvpModal = document.getElementById('rsvpModal');
-    const rsvpFamilyName = document.getElementById('rsvpFamilyName');
-    const guestName = document.getElementById('guestName');
-    const guestCount = document.getElementById('guestCount');
-    const guestMessage = document.getElementById('guestMessage');
-    const acceptBtn = document.querySelector('.acceptBtn');
-    const declineBtn = document.querySelector('.declineBtn');
-    const closeRSVP = document.querySelector('.closeRSVP');
+  // RSVP elements
+  const rsvpModal = document.getElementById('rsvpModal');
+  const rsvpFamilyName = document.getElementById('rsvpFamilyName');
+  const guestName = document.getElementById('guestName');
+  const guestCount = document.getElementById('guestCount');
+  const guestMessage = document.getElementById('guestMessage');
+  const acceptBtn = document.querySelector('.acceptBtn');
+  const declineBtn = document.querySelector('.declineBtn');
+  const closeRSVP = document.querySelector('.closeRSVP');
 
-    // Replace this with your Google Apps Script URL
-    const RSVP_URL = "https://script.google.com/macros/s/PASTE_YOUR_DEPLOYED_URL_HERE/exec";
+  // Replace this with your Google Apps Script URL
+  const RSVP_URL = "https://script.google.com/macros/s/PASTE_YOUR_DEPLOYED_URL_HERE/exec";
 
-    const inviteLimits = {
-      "Eddie's Family": 6,
-      "Ali's Family": 4,
-      "Val's Family": 3,
-      "Vito's Family": 5,
-      "Jun's Family": 4,
-      "Evelyn's Family": 5,
-      "Gamay's Family": 3,
-      "Neneng's Family": 4,
-      "Natividad's Family": 4,
-      "Benjamin's Family": 4
-    };
+  const inviteLimits = {
+    "Eddie's Family": 6,
+    "Ali's Family": 4,
+    "Val's Family": 3,
+    "Vito's Family": 5,
+    "Jun's Family": 4,
+    "Evelyn's Family": 5,
+    "Gamay's Family": 3,
+    "Neneng's Family": 4,
+    "Natividad's Family": 4,
+    "Benjamin's Family": 4
+  };
 
-    brideBtn.onclick=()=>{
-      mainContainer.style.display='none';
-      brideFamilies.style.display='block';
-    };
+  // ✅ Add this line here
+  let currentFamily = '';
 
-    groomBtn.onclick=()=>{
-      alert("Currently on process");
-    };
+  brideBtn.onclick = () => {
+    mainContainer.style.display = 'none';
+    brideFamilies.style.display = 'block';
+  };
 
-    friendsBtn.onclick=()=>{
-      reservedVideo.src = 'reservation.mp4';
-      modal.style.display='flex';
-    };
+  groomBtn.onclick = () => {
+    alert("Currently on process");
+  };
 
-    document.querySelectorAll('.family-btn').forEach(btn=>{
-      btn.onclick=()=>{
-        const fam=btn.dataset.family;
-        reservedVideo.src = videos[fam];
-        modal.style.display='flex';
-        reservedVideo.onended = ()=> {
-          modal.style.display='none';
-          showRSVP(fam);
-        };
-      };
+  friendsBtn.onclick = () => {
+    reservedVideo.src = 'reservation.mp4';
+    modal.style.display = 'flex';
+  };
+
+  // ✅ Replace your old family-btn handler with this new one
+  document.querySelectorAll('.family-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      currentFamily = btn.getAttribute('data-family');
+      const videoSrc = videos[currentFamily];
+      if (videoSrc) {
+        reservedVideo.src = videoSrc;
+        modal.style.display = 'flex';
+        reservedVideo.play();
+      }
     });
+  });
 
-    closeSheet.onclick=()=>{
-      modal.style.display='none';
+  // ✅ Add this after the click handler
+  // Show RSVP automatically after 5 seconds of video playing
+  reservedVideo.onplay = () => {
+    setTimeout(() => {
+      modal.style.display = 'none';
       reservedVideo.pause();
+      showRSVP(currentFamily);
+    }, 5000); // 5000 = 5 seconds
+  };
+
+  closeSheet.onclick = () => {
+    modal.style.display = 'none';
+    reservedVideo.pause();
+  };
+
+  function showRSVP(family) {
+    rsvpFamilyName.textContent = family;
+    guestCount.max = inviteLimits[family] || 10;
+    rsvpModal.style.display = 'flex';
+  }
+
+  function sendRSVP(responseType) {
+    const data = {
+      family: rsvpFamilyName.textContent,
+      name: guestName.value,
+      count: guestCount.value,
+      response: responseType,
+      message: guestMessage.value
     };
 
-    function showRSVP(family) {
-      rsvpFamilyName.textContent = family;
-      guestCount.max = inviteLimits[family] || 10;
-      rsvpModal.style.display = 'flex';
-    }
+    fetch(RSVP_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data)
+    }).then(res => {
+      alert("Thank you for your response! 💕");
+      rsvpModal.style.display = 'none';
+      guestName.value = '';
+      guestCount.value = '';
+      guestMessage.value = '';
+    }).catch(err => alert("Error submitting RSVP"));
+  }
 
-    function sendRSVP(responseType) {
-      const data = {
-        family: rsvpFamilyName.textContent,
-        name: guestName.value,
-        count: guestCount.value,
-        response: responseType,
-        message: guestMessage.value
-      };
+  acceptBtn.onclick = () => sendRSVP("Accepted with Joy");
+  declineBtn.onclick = () => sendRSVP("Declined with Regret");
+  closeRSVP.onclick = () => rsvpModal.style.display = 'none';
+</script>
 
-      fetch(RSVP_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data)
-      }).then(res => {
-        alert("Thank you for your response! 💕");
-        rsvpModal.style.display = 'none';
-        guestName.value = '';
-        guestCount.value = '';
-        guestMessage.value = '';
-      }).catch(err => alert("Error submitting RSVP"));
-    }
-
-    acceptBtn.onclick = () => sendRSVP("Accepted with Joy");
-    declineBtn.onclick = () => sendRSVP("Declined with Regret");
-    closeRSVP.onclick = () => rsvpModal.style.display = 'none';
-  </script>
 </body>
 </html>

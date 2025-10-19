@@ -3,18 +3,21 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title> Seat Reservation Confirmation </title>
+  <title>Seat Reservation Confirmation</title>
   <style>
-    body{
-      margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,'Helvetica Neue',Arial;
+    body {
+      margin:0;
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,'Helvetica Neue',Arial;
       background:linear-gradient(180deg,#fff8f8 0%,#fff3f7 40%,#fdf6ff 100%);
       display:flex;align-items:center;justify-content:center;min-height:100vh;
     }
-    .video-background{
+    .video-background {
       position:fixed;top:0;left:0;width:100%;height:100%;object-fit:cover;z-index:-1;
     }
-    .container{
-      background:rgba(255,255,255,0.9);border-radius:20px;padding:30px 20px;box-shadow:0 10px 25px rgba(0,0,0,0.08);
+    .container {
+      background:rgba(255,255,255,0.9);
+      border-radius:20px;padding:30px 20px;
+      box-shadow:0 10px 25px rgba(0,0,0,0.08);
       text-align:center;max-width:420px;width:100%;
     }
     .ring{margin-bottom:15px}
@@ -37,21 +40,22 @@
     Your browser does not support the video tag.
   </video>
 
+  <!-- MAIN SCREEN -->
   <div class="container" id="mainContainer">
-    <div class="ring"> </div>
+    <div class="ring"></div>
     <h1>We are overjoyed to celebrate this day with our loved ones!</h1>
     <p>Please select who you are:</p>
     <button class="btn" id="brideBtn"><span>👰</span>Family of the Bride</button>
     <button class="btn" id="groomBtn"><span>🤵</span>Family of the Groom</button>
     <button class="btn" id="friendsBtn"><span>🌸</span>Friends of Bride and Groom</button>
-    <footer> Michelle Joy & Jesryl #JESRYLoffiCHELLEyfoundtheone </footer>
+    <footer>Michelle Joy & Jesryl #JESRYLoffiCHELLEyfoundtheone</footer>
   </div>
 
+  <!-- BRIDE FAMILIES -->
   <div class="container" id="brideFamilies" style="display:none">
     <div class="ring">💍</div>
     <h1>Please choose your family name below to view your reserved seats.</h1>
     <div class="family-grid">
-      <!-- Left side -->
       <button class="family-btn" data-family="Eddie's Family">Eddie's Family</button>
       <button class="family-btn" data-family="Evelyn's Family">Evelyn's Family</button>
       <button class="family-btn" data-family="Ali's Family">Ali's Family</button>
@@ -66,10 +70,26 @@
     </div>
   </div>
 
+  <!-- VIDEO MODAL -->
   <div id="modal">
     <div class="modal-content">
       <video id="reservedVideo" class="modal-video" autoplay loop muted playsinline></video>
       <button class="close" id="closeSheet">OK</button>
+    </div>
+  </div>
+
+  <!-- RSVP MODAL -->
+  <div id="rsvpModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); align-items:center; justify-content:center;">
+    <div style="background:#fff; border-radius:12px; padding:20px; max-width:360px; width:90%; text-align:center;">
+      <h2>RSVP for <span id="rsvpFamilyName"></span></h2>
+      <input type="text" id="guestName" placeholder="Your Name" style="width:100%; padding:10px; margin:8px 0;">
+      <input type="number" id="guestCount" placeholder="Number Attending" min="1" style="width:100%; padding:10px; margin:8px 0;">
+      <textarea id="guestMessage" placeholder="Message (optional)" style="width:100%; padding:10px; margin:8px 0;"></textarea>
+      <div>
+        <button class="acceptBtn" style="background:#28a745;color:#fff;border:none;padding:10px 16px;border-radius:8px;margin-right:8px;">Accept with Joy 💖</button>
+        <button class="declineBtn" style="background:#dc3545;color:#fff;border:none;padding:10px 16px;border-radius:8px;">Decline with Regret 😢</button>
+      </div>
+      <button class="closeRSVP" style="margin-top:10px; background:#0072ff; color:white; border:none; padding:8px 16px; border-radius:8px;">Close</button>
     </div>
   </div>
 
@@ -97,13 +117,41 @@
     const reservedVideo=document.getElementById('reservedVideo');
     const closeSheet=document.getElementById('closeSheet');
 
+    // RSVP elements
+    const rsvpModal = document.getElementById('rsvpModal');
+    const rsvpFamilyName = document.getElementById('rsvpFamilyName');
+    const guestName = document.getElementById('guestName');
+    const guestCount = document.getElementById('guestCount');
+    const guestMessage = document.getElementById('guestMessage');
+    const acceptBtn = document.querySelector('.acceptBtn');
+    const declineBtn = document.querySelector('.declineBtn');
+    const closeRSVP = document.querySelector('.closeRSVP');
+
+    // Replace this with your Google Apps Script URL
+    const RSVP_URL = "https://script.google.com/macros/s/PASTE_YOUR_DEPLOYED_URL_HERE/exec";
+
+    const inviteLimits = {
+      "Eddie's Family": 6,
+      "Ali's Family": 4,
+      "Val's Family": 3,
+      "Vito's Family": 5,
+      "Jun's Family": 4,
+      "Evelyn's Family": 5,
+      "Gamay's Family": 3,
+      "Neneng's Family": 4,
+      "Natividad's Family": 4,
+      "Benjamin's Family": 4
+    };
+
     brideBtn.onclick=()=>{
       mainContainer.style.display='none';
       brideFamilies.style.display='block';
     };
+
     groomBtn.onclick=()=>{
       alert("Currently on process");
     };
+
     friendsBtn.onclick=()=>{
       reservedVideo.src = 'reservation.mp4';
       modal.style.display='flex';
@@ -114,38 +162,49 @@
         const fam=btn.dataset.family;
         reservedVideo.src = videos[fam];
         modal.style.display='flex';
-      }
+        reservedVideo.onended = ()=> {
+          modal.style.display='none';
+          showRSVP(fam);
+        };
+      };
     });
 
     closeSheet.onclick=()=>{
       modal.style.display='none';
-      brideFamilies.style.display='none';
-      mainContainer.style.display='block';
+      reservedVideo.pause();
     };
-   // handle click sa bride button
-brideBtn.addEventListener('click', () => {
-  mainContainer.style.display = 'none';
-  brideFamilies.style.display = 'block';
-});
 
-// handle click sa mga family buttons
-document.querySelectorAll('.family-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    const family = btn.getAttribute('data-family');
-    const videoSrc = videos[family];
-    if (videoSrc) {
-      reservedVideo.src = videoSrc;
-      modal.style.display = 'flex';
+    function showRSVP(family) {
+      rsvpFamilyName.textContent = family;
+      guestCount.max = inviteLimits[family] || 10;
+      rsvpModal.style.display = 'flex';
     }
-  });
-});
 
-// handle close modal
-closeSheet.addEventListener('click', () => {
-  modal.style.display = 'none';
-  reservedVideo.pause();
-});
+    function sendRSVP(responseType) {
+      const data = {
+        family: rsvpFamilyName.textContent,
+        name: guestName.value,
+        count: guestCount.value,
+        response: responseType,
+        message: guestMessage.value
+      };
+
+      fetch(RSVP_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+      }).then(res => {
+        alert("Thank you for your response! 💕");
+        rsvpModal.style.display = 'none';
+        guestName.value = '';
+        guestCount.value = '';
+        guestMessage.value = '';
+      }).catch(err => alert("Error submitting RSVP"));
+    }
+
+    acceptBtn.onclick = () => sendRSVP("Accepted with Joy");
+    declineBtn.onclick = () => sendRSVP("Declined with Regret");
+    closeRSVP.onclick = () => rsvpModal.style.display = 'none';
   </script>
 </body>
 </html>
-

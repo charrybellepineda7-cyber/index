@@ -31,7 +31,6 @@
     #modal{position:fixed;inset:0;background:rgba(0,0,0,0.4);display:none;align-items:center;justify-content:center}
     .modal-content{background:#f0f0f0;padding:20px;border-radius:14px;text-align:center;max-width:320px}
     .modal-video{max-width:100%;border-radius:10px}
-    .close{margin-top:15px;padding:8px 16px;border:none;border-radius:8px;background:#0072ff;color:#fff;font-weight:600;cursor:pointer}
   </style>
 </head>
 <body>
@@ -70,156 +69,126 @@
     </div>
   </div>
 
-  <!-- VIDEO MODAL -->
+  <!-- NEW VIDEO MODAL WITH RSVP BUTTONS -->
   <div id="modal">
-    <div class="modal-content">
+    <div class="modal-content" style="text-align:center;">
       <video id="reservedVideo" class="modal-video" autoplay loop muted playsinline></video>
-      <button class="close" id="closeSheet">OK</button>
-    </div>
-  </div>
 
-  <!-- RSVP MODAL -->
-  <div id="rsvpModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); align-items:center; justify-content:center;">
-    <div style="background:#fff; border-radius:12px; padding:20px; max-width:360px; width:90%; text-align:center;">
-      <h2>RSVP for <span id="rsvpFamilyName"></span></h2>
-      <input type="text" id="guestName" placeholder="Your Name" style="width:100%; padding:10px; margin:8px 0;">
-      <input type="number" id="guestCount" placeholder="Number Attending" min="1" style="width:100%; padding:10px; margin:8px 0;">
-      <textarea id="guestMessage" placeholder="Message (optional)" style="width:100%; padding:10px; margin:8px 0;"></textarea>
-      <div>
-        <button class="acceptBtn" style="background:#28a745;color:#fff;border:none;padding:10px 16px;border-radius:8px;margin-right:8px;">Accept with Joy 💖</button>
-        <button class="declineBtn" style="background:#dc3545;color:#fff;border:none;padding:10px 16px;border-radius:8px;">Decline with Regret 😢</button>
+      <!-- RSVP Buttons -->
+      <div id="rsvpButtons" style="margin-top: 15px; display: none;">
+        <p style="font-size:14px;color:#555;margin-bottom:8px;">
+          Children ages 1–5 are not excluded in the counting, but it is up to the invitees if they will bring them or not.
+        </p>
+        <button class="acceptBtn"
+          style="background:#28a745;color:#fff;border:none;padding:10px 16px;border-radius:8px;margin:5px;cursor:pointer;">
+          Accept with Joy 💖
+        </button>
+        <button class="declineBtn"
+          style="background:#dc3545;color:#fff;border:none;padding:10px 16px;border-radius:8px;margin:5px;cursor:pointer;">
+          Decline with Regret 😢
+        </button>
       </div>
-      <button class="closeRSVP" style="margin-top:10px; background:#0072ff; color:white; border:none; padding:8px 16px; border-radius:8px;">Close</button>
+
+      <!-- Thank You Message -->
+      <p id="thankYouMsg"
+        style="opacity:0; transition:opacity 1s ease; color:#0072ff; font-weight:600; margin-top:15px;">
+        Thank you for your response 💕
+      </p>
     </div>
   </div>
 
   <script>
-  const videos = {
-    "Eddie's Family": "reservation9.mp4",
-    "Ali's Family": "reservation8.mp4",
-    "Elizer's Family": "reservation6.mp4",
-    "Val's Family": "reservation4.mp4",
-    "Vito's Family": "reservation7.mp4",
-    "Jun's Family": "reservation6.mp4",
-    "Evelyn's Family": "reservation4.mp4",
-    "Gamay's Family": "reservation17.mp4",
-    "Neneng's Family": "reservation11.mp4",
-    "Natividad's Family": "reservation14.mp4",
-    "Benjamin's Family": "reservation14.mp4"
-  };
-
-  const brideBtn = document.getElementById('brideBtn');
-  const groomBtn = document.getElementById('groomBtn');
-  const friendsBtn = document.getElementById('friendsBtn');
-  const brideFamilies = document.getElementById('brideFamilies');
-  const mainContainer = document.getElementById('mainContainer');
-  const modal = document.getElementById('modal');
-  const reservedVideo = document.getElementById('reservedVideo');
-  const closeSheet = document.getElementById('closeSheet');
-
-  // RSVP elements
-  const rsvpModal = document.getElementById('rsvpModal');
-  const rsvpFamilyName = document.getElementById('rsvpFamilyName');
-  const guestName = document.getElementById('guestName');
-  const guestCount = document.getElementById('guestCount');
-  const guestMessage = document.getElementById('guestMessage');
-  const acceptBtn = document.querySelector('.acceptBtn');
-  const declineBtn = document.querySelector('.declineBtn');
-  const closeRSVP = document.querySelector('.closeRSVP');
-
-  // Replace this with your Google Apps Script URL
-  const RSVP_URL = "https://script.google.com/macros/s/PASTE_YOUR_DEPLOYED_URL_HERE/exec";
-
-  const inviteLimits = {
-    "Eddie's Family": 6,
-    "Ali's Family": 4,
-    "Val's Family": 3,
-    "Vito's Family": 5,
-    "Jun's Family": 4,
-    "Evelyn's Family": 5,
-    "Gamay's Family": 3,
-    "Neneng's Family": 4,
-    "Natividad's Family": 4,
-    "Benjamin's Family": 4
-  };
-
-  // ✅ Add this line here
-  let currentFamily = '';
-
-  brideBtn.onclick = () => {
-    mainContainer.style.display = 'none';
-    brideFamilies.style.display = 'block';
-  };
-
-  groomBtn.onclick = () => {
-    alert("Currently on process");
-  };
-
-  friendsBtn.onclick = () => {
-    reservedVideo.src = 'reservation.mp4';
-    modal.style.display = 'flex';
-  };
-
-  // ✅ Replace your old family-btn handler with this new one
-  document.querySelectorAll('.family-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      currentFamily = btn.getAttribute('data-family');
-      const videoSrc = videos[currentFamily];
-      if (videoSrc) {
-        reservedVideo.src = videoSrc;
-        modal.style.display = 'flex';
-        reservedVideo.play();
-      }
-    });
-  });
-
-  // ✅ Add this after the click handler
-  // Show RSVP automatically after 5 seconds of video playing
-  reservedVideo.onplay = () => {
-    setTimeout(() => {
-      modal.style.display = 'none';
-      reservedVideo.pause();
-      showRSVP(currentFamily);
-    }, 5000); // 5000 = 5 seconds
-  };
-
-  closeSheet.onclick = () => {
-    modal.style.display = 'none';
-    reservedVideo.pause();
-  };
-
-  function showRSVP(family) {
-    rsvpFamilyName.textContent = family;
-    guestCount.max = inviteLimits[family] || 10;
-    rsvpModal.style.display = 'flex';
-  }
-
-  function sendRSVP(responseType) {
-    const data = {
-      family: rsvpFamilyName.textContent,
-      name: guestName.value,
-      count: guestCount.value,
-      response: responseType,
-      message: guestMessage.value
+    const videos = {
+      "Eddie's Family": "reservation9.mp4",
+      "Ali's Family": "reservation8.mp4",
+      "Elizer's Family": "reservation6.mp4",
+      "Val's Family": "reservation4.mp4",
+      "Vito's Family": "reservation7.mp4",
+      "Jun's Family": "reservation6.mp4",
+      "Evelyn's Family": "reservation4.mp4",
+      "Gamay's Family": "reservation17.mp4",
+      "Neneng's Family": "reservation11.mp4",
+      "Natividad's Family": "reservation14.mp4",
+      "Benjamin's Family": "reservation14.mp4"
     };
 
-    fetch(RSVP_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data)
-    }).then(res => {
-      alert("Thank you for your response! 💕");
-      rsvpModal.style.display = 'none';
-      guestName.value = '';
-      guestCount.value = '';
-      guestMessage.value = '';
-    }).catch(err => alert("Error submitting RSVP"));
-  }
+    const brideBtn = document.getElementById('brideBtn');
+    const groomBtn = document.getElementById('groomBtn');
+    const friendsBtn = document.getElementById('friendsBtn');
+    const brideFamilies = document.getElementById('brideFamilies');
+    const mainContainer = document.getElementById('mainContainer');
+    const modal = document.getElementById('modal');
+    const reservedVideo = document.getElementById('reservedVideo');
+    const thankYouMsg = document.getElementById('thankYouMsg');
+    const rsvpButtons = document.getElementById('rsvpButtons');
 
-  acceptBtn.onclick = () => sendRSVP("Accepted with Joy");
-  declineBtn.onclick = () => sendRSVP("Declined with Regret");
-  closeRSVP.onclick = () => rsvpModal.style.display = 'none';
-</script>
+    const RSVP_URL = "https://script.google.com/macros/s/AKfycbzBj5aiHjU_7sRnxsd0P8HIDqwH8OD-XtUfQ3h2zSiJKkmqbh5YF4U2NZQBTTO1cGU2TA/exec";
 
+    let currentFamily = '';
+
+    brideBtn.onclick = () => {
+      mainContainer.style.display = 'none';
+      brideFamilies.style.display = 'block';
+    };
+
+    groomBtn.onclick = () => {
+      alert("Currently on process");
+    };
+
+    friendsBtn.onclick = () => {
+      reservedVideo.src = 'reservation.mp4';
+      modal.style.display = 'flex';
+      reservedVideo.play();
+    };
+
+    // Show video and RSVP buttons
+    document.querySelectorAll('.family-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        currentFamily = btn.getAttribute('data-family');
+        const videoSrc = videos[currentFamily];
+        if (videoSrc) {
+          reservedVideo.src = videoSrc;
+          modal.style.display = 'flex';
+          reservedVideo.play();
+
+          // Reset states
+          rsvpButtons.style.display = 'none';
+          thankYouMsg.style.opacity = 0;
+
+          // Show buttons after 5 seconds
+          setTimeout(() => {
+            rsvpButtons.style.display = 'block';
+          }, 5000);
+        }
+      });
+    });
+
+    function sendRSVP(responseType) {
+      const data = {
+        family: currentFamily,
+        name: '',
+        count: '',
+        response: responseType,
+        message: ''
+      };
+
+      fetch(RSVP_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+      }).then(res => {
+        rsvpButtons.style.display = 'none';
+        thankYouMsg.style.opacity = 1;
+
+        setTimeout(() => {
+          thankYouMsg.style.opacity = 0;
+          setTimeout(() => modal.style.display = 'none', 1000);
+        }, 3000);
+      }).catch(err => alert("Error submitting RSVP"));
+    }
+
+    document.querySelector('.acceptBtn').onclick = () => sendRSVP("Accepted with Joy");
+    document.querySelector('.declineBtn').onclick = () => sendRSVP("Declined with Regret");
+  </script>
 </body>
 </html>

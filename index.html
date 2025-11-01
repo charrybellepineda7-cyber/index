@@ -9,7 +9,7 @@
   body {
     margin: 0;
     font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-    background: linear-gradient(180deg, #f9f9f9 0%, #f7f4ff 40%, #fdfdfd 100%);
+    background: linear-gradient(180deg, #f8fafc 0%, #eef3f8 40%, #fdfdfd 100%);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -28,7 +28,7 @@
     background: url('joyjoy.jpg') no-repeat center center / cover;
     z-index: -1;
     opacity: 0.8;
-    filter: brightness(0.85);
+    filter: brightness(0.9);
   }
 
   .container {
@@ -39,12 +39,12 @@
     width: 380px;
     margin: 80px auto;
     text-align: center;
-    box-shadow: 0 6px 25px rgba(30, 42, 94, 0.25);
-    border: 2px solid rgba(248, 232, 162, 0.4);
+    box-shadow: 0 6px 25px rgba(126, 165, 201, 0.25);
+    border: 2px solid rgba(168, 197, 219, 0.4);
   }
 
   h1 {
-    color: #1E2A5E;
+    color: #557a9b;
     font-size: 18px;
     margin: 0 0 12px;
     font-weight: 700;
@@ -64,8 +64,8 @@
     margin: 6px 0;
     border: 2px solid transparent;
     border-radius: 10px;
-    background: linear-gradient(90deg, #1E2A5E, #243B6B);
-    color: #f8e8a2;
+    background: linear-gradient(90deg, #A8C5DB, #7EA5C9);
+    color: white;
     font-size: 15px;
     font-weight: 600;
     cursor: pointer;
@@ -73,8 +73,8 @@
   }
 
   .btn:hover {
-    box-shadow: 0 0 10px 2px rgba(248, 232, 162, 0.7);
-    border-color: #f8e8a2;
+    box-shadow: 0 0 12px 3px rgba(255, 255, 255, 0.7);
+    border-color: #f0f4f8;
     transform: translateY(-2px);
   }
 
@@ -86,8 +86,8 @@
   }
 
   .family-btn {
-    background: linear-gradient(90deg, #1E2A5E, #243B6B);
-    color: #f8e8a2;
+    background: linear-gradient(90deg, #A8C5DB, #7EA5C9);
+    color: white;
     border: 2px solid transparent;
     border-radius: 8px;
     padding: 10px 0;
@@ -98,15 +98,15 @@
   }
 
   .family-btn:hover {
-    box-shadow: 0 0 10px 2px rgba(248, 232, 162, 0.7);
-    border-color: #f8e8a2;
+    box-shadow: 0 0 10px 3px rgba(240, 244, 248, 0.9);
+    border-color: #e8edf3;
     transform: scale(1.05);
   }
 
   footer {
     margin-top: 15px;
     font-size: 12px;
-    color: #1E2A5E;
+    color: #7EA5C9;
     font-weight: 600;
   }
 
@@ -121,17 +121,17 @@
   }
 
   .modal-content {
-    background: #fffef9;
+    background: #fdfefe;
     padding: 25px;
     border-radius: 15px;
     text-align: center;
     max-width: 320px;
-    box-shadow: 0 6px 25px rgba(30, 42, 94, 0.35);
-    border: 2px solid rgba(248, 232, 162, 0.6);
+    box-shadow: 0 6px 25px rgba(126, 165, 201, 0.35);
+    border: 2px solid rgba(168, 197, 219, 0.6);
   }
 
   #reservedText p {
-    color: #1E2A5E;
+    color: #557a9b;
     font-size: 18px;
     margin: 0;
   }
@@ -139,7 +139,7 @@
   #seatCount {
     font-size: 90px;
     font-weight: bold;
-    color: #1E2A5E;
+    color: #7EA5C9;
     margin: 10px 0;
   }
 
@@ -154,24 +154,44 @@
   }
 
   .acceptBtn {
-    background: linear-gradient(90deg, #1E2A5E, #243B6B);
-    color: #f8e8a2;
+    background: linear-gradient(90deg, #A8C5DB, #7EA5C9);
+    color: white;
   }
 
   .declineBtn {
-    background: #f8e8a2;
-    color: #1E2A5E;
+    background: #e3e8ee;
+    color: #4c6b89;
   }
 
   .acceptBtn:hover, .declineBtn:hover {
-    box-shadow: 0 0 8px 2px rgba(248, 232, 162, 0.7);
+    box-shadow: 0 0 8px 2px rgba(255, 255, 255, 0.7);
     transform: scale(1.05);
+  }
+
+  /* Custom thank-you popup */
+  .thankyou-box {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(255, 255, 255, 0.95);
+    border: 2px solid #A8C5DB;
+    border-radius: 20px;
+    padding: 25px 35px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 16px;
+    text-align: center;
+    color: #476D91;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    z-index: 9999;
+    opacity: 1;
+    transition: opacity 0.5s ease;
   }
 
   #thankYouMsg {
     opacity: 0;
     transition: opacity 1s ease;
-    color: #1E2A5E;
+    color: #557a9b;
     font-weight: 600;
     margin-top: 15px;
   }
@@ -194,7 +214,7 @@
     <button class="btn" id="brideBtn">Family of the Bride</button>
     <button class="btn" id="groomBtn">Family of the Groom</button>
     <button class="btn" id="friendsBtn">Friend of the Groom or the Bride</button>
-    <footer>⚜️ The Wedding of Jesryl & Michelle 2025 ⚜️</footer>
+    <footer>💎 The Wedding 2025 💎</footer>
   </div>
 
   <div class="container" id="brideFamilies" style="display:none">
@@ -223,14 +243,12 @@
       </div>
 
       <div id="rsvpButtons" style="margin-top: 15px; display: none;">
-        <p style="font-size:14px;color:#444;margin-bottom:8px;">
-          Children ages 1–5 are excluded in the counting, but it is up to the invitees if they will bring them or not.
+        <p style="font-size:14px;color:#555;margin-bottom:8px;">
+          Children ages 1–5 are not excluded in the counting, but it is up to the invitees if they will bring them or not.
         </p>
         <button class="acceptBtn">Accept with Joy</button>
         <button class="declineBtn">Decline with Regret</button>
       </div>
-
-      <p id="thankYouMsg">Thank you for your response!</p>
     </div>
   </div>
 
@@ -242,7 +260,6 @@
     const mainContainer = document.getElementById('mainContainer');
     const modal = document.getElementById('modal');
     const seatCount = document.getElementById('seatCount');
-    const thankYouMsg = document.getElementById('thankYouMsg');
     const rsvpButtons = document.getElementById('rsvpButtons');
 
     const RSVP_URL = "https://script.google.com/macros/s/AKfycbyJ7VltJdnx1hA5D7pttpEH7uVr06YvxDnrFM--bP4ZSvaMIpqQMCBfG0BwA_RMLlJThw/exec";
@@ -266,10 +283,10 @@
 
     const seats = {
       "Eddie's Family": 9,
-      "Alimar's Family": 8,
+      "Ali's Family": 8,
       "Elizer's Family": 6,
       "Val's Family": 4,
-      "Jovito's Family": 7,
+      "Vito's Family": 7,
       "Jun's Family": 6,
       "Evelyn's Family": 4,
       "Gamay's Family": 17,
@@ -285,9 +302,21 @@
         seatCount.textContent = count;
         modal.style.display = 'flex';
         rsvpButtons.style.display = 'block';
-        thankYouMsg.style.opacity = 0;
       });
     });
+
+    // ✨ Custom floating thank-you message
+    function showThankYouMessage() {
+      const messageBox = document.createElement('div');
+      messageBox.className = 'thankyou-box';
+      messageBox.innerHTML = "💎 RSVP submitted!<br>Thank you so much for your response.<br>See you on our Wedding Day!";
+      document.body.appendChild(messageBox);
+
+      setTimeout(() => {
+        messageBox.style.opacity = '0';
+        setTimeout(() => messageBox.remove(), 600);
+      }, 3000);
+    }
 
     function sendRSVP(responseType) {
       fetch(RSVP_URL, {
@@ -300,9 +329,13 @@
         })
       })
       .then(() => {
-        alert("✅ RSVP submitted! Thank you so much for your response. See you on our Wedding Day!");
+        showThankYouMessage();
         modal.style.display = 'none';
-  
+        brideFamilies.style.display = 'none';
+        mainContainer.style.display = 'block';
+        rsvpButtons.style.display = 'none';
+        seatCount.textContent = '0';
+        currentFamily = '';
       })
       .catch(() => alert("❌ Error submitting RSVP"));
     }
@@ -312,5 +345,3 @@
   </script>
 </body>
 </html>
-
-

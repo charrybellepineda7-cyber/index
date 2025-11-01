@@ -32,10 +32,10 @@
   }
 
   .container {
-    background: rgba(255, 255, 255, 0.88);
+    background: rgba(255, 255, 255, 0.55);
     border-radius: 20px;
     padding: 30px;
-    max-width: 90%;
+    max-width: 75%;
     width: 380px;
     margin: 80px auto;
     text-align: center;
@@ -168,32 +168,31 @@
     transform: scale(1.05);
   }
 
-  /* Custom thank-you popup */
+  /* 🌸 Enhanced Thank-You Popup */
   .thankyou-box {
     position: fixed;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background: rgba(255, 255, 255, 0.95);
+    background: rgba(255, 255, 255, 0.97);
     border: 2px solid #A8C5DB;
-    border-radius: 20px;
-    padding: 25px 35px;
+    border-radius: 25px;
+    padding: 45px 55px;
     font-family: 'Poppins', sans-serif;
-    font-size: 16px;
+    font-size: 20px;
+    line-height: 1.6;
     text-align: center;
     color: #476D91;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    font-weight: 600;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.25);
     z-index: 9999;
     opacity: 1;
     transition: opacity 0.5s ease;
   }
 
-  #thankYouMsg {
-    opacity: 0;
-    transition: opacity 1s ease;
-    color: #557a9b;
-    font-weight: 600;
-    margin-top: 15px;
+  .thankyou-box span {
+    display: block;
+    margin-top: 8px;
   }
 
   @media (min-width: 768px) {
@@ -305,17 +304,21 @@
       });
     });
 
-    // ✨ Custom floating thank-you message
+    // 🌸 Custom floating thank-you message
     function showThankYouMessage() {
       const messageBox = document.createElement('div');
       messageBox.className = 'thankyou-box';
-     messageBox.innerHTML = "💎 RSVP submitted!<br>Thank you so much for your response.<br>See you on our Wedding Day!";
+      messageBox.innerHTML = `
+        💎 RSVP submitted! <br>
+        <span>Thank you so much for your response.</span>
+        <span>See you on our Wedding Day!</span>
+      `;
       document.body.appendChild(messageBox);
 
       setTimeout(() => {
         messageBox.style.opacity = '0';
         setTimeout(() => messageBox.remove(), 600);
-      }, 3000);
+      }, 3500);
     }
 
     function sendRSVP(responseType) {
@@ -345,4 +348,3 @@
   </script>
 </body>
 </html>
-

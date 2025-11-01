@@ -148,7 +148,7 @@ footer {
   transform: scale(1.05);
 }
 
-/* 🌸 Enhanced Thank-You Popup */
+/* 💎 Landscape-style Thank-You Popup */
 .thankyou-box {
   position: fixed;
   top: 50%; left: 50%;
@@ -156,21 +156,37 @@ footer {
   background: rgba(255, 255, 255, 0.97);
   border: 2px solid #A8C5DB;
   border-radius: 25px;
-  padding: 45px 55px;
+  padding: 25px 40px;
+  width: 90%;
+  max-width: 600px;
   font-family: 'Poppins', sans-serif;
   font-size: 20px;
-  line-height: 1.6;
   text-align: center;
   color: #476D91;
   font-weight: 600;
   box-shadow: 0 6px 20px rgba(0,0,0,0.25);
   z-index: 9999;
   opacity: 1;
+  line-height: 1.5;
+  animation: popIn 0.3s ease;
   transition: opacity 0.5s ease;
 }
 .thankyou-box span {
   display: block;
-  margin-top: 8px;
+  margin-top: 4px;
+}
+@keyframes popIn {
+  from { transform: translate(-50%, -50%) scale(0.9); opacity: 0; }
+  to { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+}
+@media (max-width: 600px) {
+  .thankyou-box {
+    width: 95%;
+    font-size: 18px;
+    padding: 20px 15px;
+    border-radius: 18px;
+    line-height: 1.4;
+  }
 }
 @media (min-width: 768px) {
   .container { max-width: 420px; padding: 25px 20px; }
@@ -286,7 +302,7 @@ document.querySelectorAll('.family-btn').forEach(btn => {
   });
 });
 
-// 🌸 Floating thank-you message
+// 💎 Floating Thank-You Message (Landscape)
 function showThankYouMessage() {
   const messageBox = document.createElement('div');
   messageBox.className = 'thankyou-box';

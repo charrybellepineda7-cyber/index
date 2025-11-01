@@ -302,10 +302,7 @@
       .then(() => {
         alert("✅ RSVP submitted! Thank you so much for your response. See you on our Wedding Day!");
         modal.style.display = 'none';
-        mainContainer.style.display = 'block';
-        rsvpButtons.style.display = 'none';
-        seatCount.textContent = '0';
-        currentFamily = '';
+  
       })
       .catch(() => alert("❌ Error submitting RSVP"));
     }
@@ -315,4 +312,5 @@
   </script>
 </body>
 </html>
+
 

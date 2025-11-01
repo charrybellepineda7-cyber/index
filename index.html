@@ -9,7 +9,7 @@
   body {
     margin: 0;
     font-family: system-ui, -apple-system, Segoe UI, Roboto, 'Helvetica Neue', Arial;
-    background: linear-gradient(180deg, #fdfcfa 0%, #f9f8f7 40%, #f8f7f6 100%);
+    background: linear-gradient(180deg, #fff8f8 0%, #fff3f7 40%, #fdf6ff 100%);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -31,54 +31,35 @@
   }
 
   .container {
-    background: rgba(255, 255, 255, 0.88);
+    background: rgba(255, 255, 255, 0.85);
     border-radius: 20px;
     padding: 30px;
     max-width: 90%;
     width: 380px;
     margin: 80px auto;
     text-align: center;
-    box-shadow: 0 4px 25px rgba(0, 0, 0, 0.15);
-    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
   }
 
-  h1 {
-    color: #1E2A5E;
-    font-size: 18px;
-    margin: 0 0 10px;
-    font-weight: 700;
-    line-height: 1.4;
-  }
+  .ring { margin-bottom: 12px; }
+  h1 { color: #4148cc; font-size: 17px; margin: 0 0 10px; font-weight: 700; line-height: 1.4; }
+  p { margin: 0 0 15px; color: #666; font-size: 14px; }
 
-  p {
-    margin: 0 0 15px;
-    color: #555;
-    font-size: 14px;
-  }
-
-  /* 🎨 Royal Navy & Gold Buttons */
   .btn {
     display: block;
     width: 100%;
-    padding: 11px;
-    margin: 8px 0;
+    padding: 10px;
+    margin: 6px 0;
     border: none;
     border-radius: 10px;
-    background: linear-gradient(90deg, #1E2A5E, #243B6B);
-    color: #f8e8a2;
+    background: linear-gradient(90deg, #00c6ff, #0072ff);
+    color: white;
     font-size: 14px;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
   }
 
-  .btn:hover {
-    background: linear-gradient(90deg, #243B6B, #1E2A5E);
-    color: #fff9cc;
-    box-shadow: 0 4px 12px rgba(255, 215, 0, 0.3);
-    transform: translateY(-2px);
-  }
+  .btn span { margin-right: 6px; }
 
   .family-grid {
     display: grid;
@@ -88,35 +69,26 @@
   }
 
   .family-btn {
-    background: linear-gradient(90deg, #1E2A5E, #243B6B);
-    color: #f8e8a2;
+    background: linear-gradient(90deg, #00c6ff, #0072ff);
+    color: white;
     border: none;
     border-radius: 8px;
     padding: 10px 0;
     font-size: 13px;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.3s ease;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.15);
-  }
-
-  .family-btn:hover {
-    background: linear-gradient(90deg, #243B6B, #1E2A5E);
-    color: #fff9cc;
-    box-shadow: 0 4px 10px rgba(255, 215, 0, 0.3);
-    transform: translateY(-2px);
   }
 
   footer {
     margin-top: 15px;
     font-size: 11px;
-    color: #777;
+    color: #888;
   }
 
   #modal {
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(0, 0, 0, 0.4);
     display: none;
     align-items: center;
     justify-content: center;
@@ -124,15 +96,51 @@
 
   .modal-content {
     background: #f9f9f9;
-    padding: 18px;
-    border-radius: 12px;
+    padding: 25px;
+    border-radius: 15px;
     text-align: center;
-    max-width: 300px;
+    max-width: 320px;
+    box-shadow: 0 6px 25px rgba(0,0,0,0.2);
   }
 
-  .modal-video {
-    max-width: 100%;
-    border-radius: 10px;
+  #reservedText {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  #reservedText p {
+    color: #333;
+    font-size: 18px;
+    margin: 0;
+  }
+
+  #seatCount {
+    font-size: 90px;
+    font-weight: bold;
+    color: #000;
+    margin: 10px 0;
+  }
+
+  .acceptBtn, .declineBtn {
+    border: none;
+    padding: 10px 16px;
+    border-radius: 8px;
+    margin: 5px;
+    cursor: pointer;
+    font-weight: 600;
+  }
+
+  .acceptBtn { background:#28a745; color:#fff; }
+  .declineBtn { background:#dc3545; color:#fff; }
+
+  #thankYouMsg {
+    opacity: 0;
+    transition: opacity 1s ease;
+    color:#0072ff;
+    font-weight:600;
+    margin-top:15px;
   }
 
   @media (min-width: 768px) {
@@ -145,17 +153,17 @@
     .btn, .family-btn { font-size: 15px; }
   }
 </style>
-
 </head>
+
 <body>
   <div class="container" id="mainContainer">
     <div class="ring"></div>
     <h1>We are overjoyed to celebrate this day with our loved ones!</h1>
     <p>Please select who you are:</p>
-    <button class="btn" id="brideBtn">Family of the Bride</button>
-    <button class="btn" id="groomBtn">Family of the Groom</button>
-    <button class="btn" id="friendsBtn">Friend of the Groom or the Bride</button>
-    <footer>The Wedding 2025</footer>
+    <button class="btn" id="brideBtn"><span></span>Family of the Bride</button>
+    <button class="btn" id="groomBtn"><span></span>Family of the Groom</button>
+    <button class="btn" id="friendsBtn"><span></span>Friend of the Groom or the Bride</button>
+    <footer> The Wedding 2025 </footer>
   </div>
 
   <div class="container" id="brideFamilies" style="display:none">
@@ -178,51 +186,32 @@
 
   <div id="modal">
     <div class="modal-content">
-      <video id="reservedVideo" class="modal-video" autoplay loop muted playsinline></video>
+      <div id="reservedText">
+        <p>We reserved</p>
+        <h1 id="seatCount">0</h1>
+        <p>seats for you!</p>
+      </div>
 
       <div id="rsvpButtons" style="margin-top: 15px; display: none;">
         <p style="font-size:14px;color:#555;margin-bottom:8px;">
           Children ages 1–5 are not excluded in the counting, but it is up to the invitees if they will bring them or not.
         </p>
-        <button class="acceptBtn"
-          style="background:#28a745;color:#fff;border:none;padding:10px 16px;border-radius:8px;margin:5px;cursor:pointer;">
-          Accept with Joy 
-        </button>
-        <button class="declineBtn"
-          style="background:#dc3545;color:#fff;border:none;padding:10px 16px;border-radius:8px;margin:5px;cursor:pointer;">
-          Decline with Regret 
-        </button>
+        <button class="acceptBtn">Accept with Joy</button>
+        <button class="declineBtn">Decline with Regret</button>
       </div>
 
-      <p id="thankYouMsg"
-        style="opacity:0; transition:opacity 1s ease; color:#1E2A5E; font-weight:600; margin-top:15px;">
-        Thank you for your response!  
-      </p>
+      <p id="thankYouMsg">Thank you for your response!</p>
     </div>
   </div>
 
   <script>
-    const videos = {
-      "Eddie's Family": "reservation9.mp4",
-      "Ali's Family": "reservation8.mp4",
-      "Elizer's Family": "reservation6.mp4",
-      "Val's Family": "reservation4.mp4",
-      "Vito's Family": "reservation7.mp4",
-      "Jun's Family": "reservation6.mp4",
-      "Evelyn's Family": "reservation4.mp4",
-      "Gamay's Family": "reservation17.mp4",
-      "Neneng's Family": "reservation11.mp4",
-      "Natividad's Family": "reservation14.mp4",
-      "Benjamin's Family": "reservation14.mp4"
-    };
-
     const brideBtn = document.getElementById('brideBtn');
     const groomBtn = document.getElementById('groomBtn');
     const friendsBtn = document.getElementById('friendsBtn');
     const brideFamilies = document.getElementById('brideFamilies');
     const mainContainer = document.getElementById('mainContainer');
     const modal = document.getElementById('modal');
-    const reservedVideo = document.getElementById('reservedVideo');
+    const seatCount = document.getElementById('seatCount');
     const thankYouMsg = document.getElementById('thankYouMsg');
     const rsvpButtons = document.getElementById('rsvpButtons');
 
@@ -240,27 +229,33 @@
     };
 
     friendsBtn.onclick = () => {
-      reservedVideo.src = 'reservation.mp4';
       modal.style.display = 'flex';
-      reservedVideo.play();
+      seatCount.textContent = 2; // Example for friends
+      rsvpButtons.style.display = 'block';
+    };
+
+    const seats = {
+      "Eddie's Family": 10,
+      "Ali's Family": 8,
+      "Elizer's Family": 6,
+      "Val's Family": 5,
+      "Vito's Family": 4,
+      "Jun's Family": 7,
+      "Evelyn's Family": 9,
+      "Gamay's Family": 12,
+      "Neneng's Family": 6,
+      "Natividad's Family": 5,
+      "Benjamin's Family": 10
     };
 
     document.querySelectorAll('.family-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         currentFamily = btn.getAttribute('data-family');
-        const videoSrc = videos[currentFamily];
-        if (videoSrc) {
-          reservedVideo.src = videoSrc;
-          modal.style.display = 'flex';
-          reservedVideo.play();
-
-          rsvpButtons.style.display = 'none';
-          thankYouMsg.style.opacity = 0;
-
-          setTimeout(() => {
-            rsvpButtons.style.display = 'block';
-          }, 5000);
-        }
+        const count = seats[currentFamily] || 0;
+        seatCount.textContent = count;
+        modal.style.display = 'flex';
+        rsvpButtons.style.display = 'block';
+        thankYouMsg.style.opacity = 0;
       });
     });
 

@@ -8,8 +8,8 @@
 <style>
   body {
     margin: 0;
-    font-family: system-ui, -apple-system, Segoe UI, Roboto, 'Helvetica Neue', Arial;
-    background: linear-gradient(180deg, #fff8f8 0%, #fff3f7 40%, #fdf6ff 100%);
+    font-family: 'Poppins', system-ui, -apple-system, Segoe UI, Roboto, 'Helvetica Neue', Arial;
+    background: linear-gradient(180deg, #fffaf5 0%, #fff6f3 40%, #fff9ef 100%);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -30,39 +30,52 @@
     opacity: 0.9;
   }
 
-  /* ✅ Compact, more transparent container */
   .container {
-  background: rgba(255, 255, 255, 0.85);
-  border-radius: 20px;
-  padding: 30px;
-  max-width: 90%;
-  width: 380px; /* ✅ adjust width to match orange outline */
-  margin: 80px auto; /* ✅ centers and adds space from top/bottom */
-  text-align: center;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-}
+    background: rgba(255, 255, 255, 0.82);
+    border-radius: 20px;
+    padding: 35px;
+    max-width: 90%;
+    width: 380px;
+    margin: 80px auto;
+    text-align: center;
+    box-shadow: 0 4px 25px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(5px);
+  }
 
-  
+  h1 {
+    color: #b48a3b; /* soft gold */
+    font-size: 18px;
+    margin: 0 0 12px;
+    font-weight: 700;
+    line-height: 1.5;
+  }
 
-  .ring { margin-bottom: 12px; }
-  h1 { color: #4148cc; font-size: 17px; margin: 0 0 10px; font-weight: 700; line-height: 1.4; }
-  p { margin: 0 0 15px; color: #666; font-size: 14px; }
+  p {
+    margin: 0 0 15px;
+    color: #5f5f5f;
+    font-size: 14px;
+  }
 
+  /* 💛 Button colors - soft gold gradient */
   .btn {
     display: block;
     width: 100%;
-    padding: 10px;
+    padding: 12px;
     margin: 6px 0;
     border: none;
     border-radius: 10px;
-    background: linear-gradient(90deg, #00c6ff, #0072ff);
+    background: linear-gradient(90deg, #f7d07a, #d6a34f);
     color: white;
-    font-size: 14px;
+    font-size: 15px;
     font-weight: 600;
     cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.2s ease;
   }
 
-  .btn span { margin-right: 6px; }
+  .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(214, 163, 79, 0.4);
+  }
 
   .family-grid {
     display: grid;
@@ -72,7 +85,7 @@
   }
 
   .family-btn {
-    background: linear-gradient(90deg, #00c6ff, #0072ff);
+    background: linear-gradient(90deg, #f9d886, #e7b25c);
     color: white;
     border: none;
     border-radius: 8px;
@@ -80,12 +93,18 @@
     font-size: 13px;
     font-weight: 600;
     cursor: pointer;
+    transition: transform 0.15s ease;
+  }
+
+  .family-btn:hover {
+    transform: scale(1.04);
+    box-shadow: 0 4px 10px rgba(231, 178, 92, 0.4);
   }
 
   footer {
     margin-top: 15px;
     font-size: 11px;
-    color: #888;
+    color: #9b8b67;
   }
 
   #modal {
@@ -98,11 +117,12 @@
   }
 
   .modal-content {
-    background: #f0f0f0;
+    background: #fffdf9;
     padding: 18px;
     border-radius: 12px;
     text-align: center;
     max-width: 300px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
   }
 
   .modal-video {
@@ -110,11 +130,10 @@
     border-radius: 10px;
   }
 
-  /* ✅ Responsive adjustment for larger screens */
   @media (min-width: 768px) {
     .container {
       max-width: 420px;
-      padding: 25px 20px;
+      padding: 30px;
       background: rgba(255, 255, 255, 0.75);
     }
     h1 { font-size: 19px; }
@@ -124,20 +143,18 @@
 
 </head>
 <body>
-  <!-- Removed the <img> tag, replaced with CSS background -->
 
   <div class="container" id="mainContainer">
     <div class="ring"></div>
     <h1>We are overjoyed to celebrate this day with our loved ones!</h1>
     <p>Please select who you are:</p>
-    <button class="btn" id="brideBtn"><span></span>Family of the Bride</button>
-    <button class="btn" id="groomBtn"><span></span>Family of the Groom</button>
-    <button class="btn" id="friendsBtn"><span></span>Friend of the Groom or the Bride</button>
-    <footer> The Wedding 2025 </footer>
+    <button class="btn" id="brideBtn">Family of the Bride</button>
+    <button class="btn" id="groomBtn">Family of the Groom</button>
+    <button class="btn" id="friendsBtn">Friend of the Groom or the Bride</button>
+    <footer>The Wedding 2025</footer>
   </div>
 
   <div class="container" id="brideFamilies" style="display:none">
-    <div class="ring"></div>
     <h1>Please choose your family name below to view your reserved seats.</h1>
     <div class="family-grid">
       <button class="family-btn" data-family="Eddie's Family">Eddie's Family</button>
@@ -157,23 +174,21 @@
   <div id="modal">
     <div class="modal-content">
       <video id="reservedVideo" class="modal-video" autoplay loop muted playsinline></video>
-
       <div id="rsvpButtons" style="margin-top: 15px; display: none;">
         <p style="font-size:14px;color:#555;margin-bottom:8px;">
           Children ages 1–5 are not excluded in the counting, but it is up to the invitees if they will bring them or not.
         </p>
         <button class="acceptBtn"
-          style="background:#28a745;color:#fff;border:none;padding:10px 16px;border-radius:8px;margin:5px;cursor:pointer;">
+          style="background:#8cc68c;color:#fff;border:none;padding:10px 16px;border-radius:8px;margin:5px;cursor:pointer;">
           Accept with Joy 
         </button>
         <button class="declineBtn"
-          style="background:#dc3545;color:#fff;border:none;padding:10px 16px;border-radius:8px;margin:5px;cursor:pointer;">
+          style="background:#d46a6a;color:#fff;border:none;padding:10px 16px;border-radius:8px;margin:5px;cursor:pointer;">
           Decline with Regret 
         </button>
       </div>
-
       <p id="thankYouMsg"
-        style="opacity:0; transition:opacity 1s ease; color:#0072ff; font-weight:600; margin-top:15px;">
+        style="opacity:0; transition:opacity 1s ease; color:#b48a3b; font-weight:600; margin-top:15px;">
         Thank you for your response!  
       </p>
     </div>
@@ -231,10 +246,8 @@
           reservedVideo.src = videoSrc;
           modal.style.display = 'flex';
           reservedVideo.play();
-
           rsvpButtons.style.display = 'none';
           thankYouMsg.style.opacity = 0;
-
           setTimeout(() => {
             rsvpButtons.style.display = 'block';
           }, 5000);
@@ -264,7 +277,3 @@
   </script>
 </body>
 </html>
-
-
-
-

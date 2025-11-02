@@ -130,7 +130,6 @@ footer { margin-top: 15px; font-size: 12px; color: #7EA5C9; font-weight: 600; }
         <input type="text" id="guestNameInput" placeholder="e.g. Charlotte Pineda"
           style="padding:8px;width:90%;border:1px solid #A8C5DB;border-radius:8px;font-size:14px;text-align:center;">
       </div>
-      <!-- Changed Friend buttons to single Submit -->
       <div id="friendButtonsContainer" style="display:none; margin-top:10px;">
         <button class="acceptBtn" id="friendSubmitBtn">Submit</button>
       </div>
@@ -163,11 +162,11 @@ friendsBtn.onclick = () => {
   rsvpButtons.style.display = 'block';
   document.getElementById('nameInputContainer').style.display = 'block';
   document.getElementById('friendButtonsContainer').style.display = 'block';
-  currentFamily = 'Friend';
+  currentFamily = ''; // leave empty, we'll use name as family
   document.querySelector('#reservedText p:nth-of-type(2)').textContent = "seat for you!";
 };
 
-// Bride Families RSVP Modal (unchanged)
+// Bride Families RSVP Modal
 const seats = {
   "Eddie's Family": 9, "Ali's Family": 8, "Elizer's Family": 6, "Val's Family": 4, "Vito's Family": 7, "Jun's Family": 6,
   "Evelyn's Family": 4, "Gamay's Family": 17, "Neneng's Family": 11, "Natividad's Family": 14, "Benjamin's Family": 14
@@ -215,7 +214,7 @@ document.querySelectorAll('.family-btn').forEach(btn => {
   });
 });
 
-// Friend Submit button
+// Friend Submit button (FIXED)
 document.getElementById('friendSubmitBtn').onclick = () => {
   const name = document.getElementById('guestNameInput').value.trim();
   if(!name){ alert("Please enter your name."); return; }
@@ -227,7 +226,11 @@ document.getElementById('friendSubmitBtn').onclick = () => {
     method:"POST",
     mode:"no-cors",
     headers:{"Content-Type":"application/json"},
-    body: JSON.stringify({family: "Friend", name:name, response: "Accepted"})
+    body: JSON.stringify({
+      family: name,   // <-- guest's exact name goes here
+      name: name,
+      response: "Accepted"
+    })
   }).catch(()=>console.log("❌ Error submitting RSVP"));
 };
 

@@ -50,12 +50,40 @@ footer { margin-top: 15px; font-size: 12px; color: #7EA5C9; font-weight: 600; }
 .modal-content { background: rgba(255,255,255,0.88); border-radius: 20px; padding: 30px; max-width: 380px; width: 380px; text-align: center; box-shadow: 0 6px 25px rgba(126, 165, 201, 0.25); border: 2px solid rgba(168, 197, 219, 0.4); transition: all 0.3s ease; }
 #reservedText p { color: #557a9b; font-size: 18px; margin: 0; }
 #seatCount { font-size: 90px; font-weight: bold; color: #7EA5C9; margin: 10px 0; transition: transform 0.3s ease; }
-.acceptBtn, .declineBtn { border: 2px solid transparent; padding: 10px 16px; border-radius: 8px; margin: 5px; cursor: pointer; font-weight: 600; transition: all 0.3s ease; }
+.acceptBtn, .declineBtn {
+  border: 2px solid transparent;
+  padding: 10px 16px;
+  border-radius: 8px;
+  margin: 5px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
 .acceptBtn { background: linear-gradient(90deg, #A8C5DB, #7EA5C9); color: white; }
 .declineBtn { background: #e3e8ee; color: #4c6b89; }
 .acceptBtn:hover, .declineBtn:hover { box-shadow: 0 0 8px 2px rgba(255,255,255,0.7); transform: scale(1.05); }
-/* Thank-You Popup */
-.thankyou-box { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(255,255,255,0.97); border: 2px solid #A8C5DB; border-radius: 25px; padding: 25px 40px; width: 90%; max-width: 600px; font-family: 'Poppins', sans-serif; font-size: 20px; text-align: center; color: #476D91; font-weight: 600; box-shadow: 0 6px 20px rgba(0,0,0,0.25); z-index: 9999; opacity: 1; line-height: 1.5; animation: popIn 0.3s ease; transition: opacity 0.5s ease; }
+/* Thank-You Popup smaller */
+.thankyou-box {
+  position: fixed; top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(255, 255, 255, 0.97);
+  border: 2px solid #A8C5DB;
+  border-radius: 25px;
+  padding: 20px 25px;
+  width: 80%;
+  max-width: 400px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 18px;
+  text-align: center;
+  color: #476D91;
+  font-weight: 600;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+  z-index: 9999;
+  opacity: 1;
+  line-height: 1.5;
+  animation: popIn 0.3s ease;
+  transition: opacity 0.5s ease;
+}
 .thankyou-box span { display: block; margin-top: 4px; }
 @keyframes popIn { from { transform: translate(-50%, -50%) scale(0.9); opacity: 0; } to { transform: translate(-50%, -50%) scale(1); opacity: 1; } }
 </style>
@@ -102,6 +130,10 @@ footer { margin-top: 15px; font-size: 12px; color: #7EA5C9; font-weight: 600; }
         <input type="text" id="guestNameInput" placeholder="e.g. Charlotte Pineda"
           style="padding:8px;width:90%;border:1px solid #A8C5DB;border-radius:8px;font-size:14px;text-align:center;">
       </div>
+      <div id="friendButtonsContainer" style="display:none; margin-top:10px;">
+        <button class="acceptBtn" id="friendAcceptBtn">Accept with Joy</button>
+        <button class="declineBtn" id="friendDeclineBtn">Decline with Regret</button>
+      </div>
     </div>
   </div>
 </div>
@@ -123,27 +155,20 @@ brideBtn.onclick = () => {
   brideFamilies.style.display = 'block';
 };
 groomBtn.onclick = () => { alert("Currently on process"); };
+
 friendsBtn.onclick = () => {
   modal.style.display = 'flex';
   seatCount.textContent = 1;
   rsvpButtons.style.display = 'block';
   document.getElementById('nameInputContainer').style.display = 'block';
-  currentFamily = '';
+  document.getElementById('friendButtonsContainer').style.display = 'block';
+  currentFamily = 'Friend';
   document.querySelector('#reservedText p:nth-of-type(2)').textContent = "seat for you!";
 };
 
 const seats = {
-  "Eddie's Family": 9,
-  "Ali's Family": 8,
-  "Elizer's Family": 6,
-  "Val's Family": 4,
-  "Vito's Family": 7,
-  "Jun's Family": 6,
-  "Evelyn's Family": 4,
-  "Gamay's Family": 17,
-  "Neneng's Family": 11,
-  "Natividad's Family": 14,
-  "Benjamin's Family": 14
+  "Eddie's Family": 9, "Ali's Family": 8, "Elizer's Family": 6, "Val's Family": 4, "Vito's Family": 7, "Jun's Family": 6,
+  "Evelyn's Family": 4, "Gamay's Family": 17, "Neneng's Family": 11, "Natividad's Family": 14, "Benjamin's Family": 14
 };
 
 // Bride Families RSVP Modal
@@ -152,10 +177,11 @@ document.querySelectorAll('.family-btn').forEach(btn => {
     currentFamily = btn.getAttribute('data-family');
     const reservedSeats = seats[currentFamily] || 0;
 
-    // Show modal
     modal.style.display = 'flex';
     rsvpButtons.style.display = 'block';
-    
+    document.getElementById('nameInputContainer').style.display = 'block';
+    document.getElementById('friendButtonsContainer').style.display = 'none';
+
     document.getElementById('reservedText').innerHTML = `
       <p style="color:#557a9b;font-size:16px;margin-bottom:5px;">Reserved Available Seats:</p>
       <h1 id="seatCount">${reservedSeats}</h1>
@@ -164,7 +190,7 @@ document.querySelectorAll('.family-btn').forEach(btn => {
         style="padding:8px;width:90%;border:1px solid #A8C5DB;border-radius:8px;font-size:16px;text-align:center;">
       <button class="acceptBtn" id="submitAttendeesBtn" style="margin-top:10px;width:50%;font-size:14px;">Submit</button>
     `;
-    
+
     const attendeesInput = document.getElementById('attendeesInput');
     attendeesInput.setAttribute('max', reservedSeats);
 
@@ -174,17 +200,12 @@ document.querySelectorAll('.family-btn').forEach(btn => {
         alert(`Please enter a number between 1 and ${reservedSeats}`);
         return;
       }
-
-      // Show Thank You message immediately
+      // Show Thank You immediately
       showThankYouMessage();
-
-      // Hide modal and reset view
       modal.style.display = 'none';
       brideFamilies.style.display = 'none';
       mainContainer.style.display = 'block';
-      currentFamily = '';
 
-      // Send RSVP in background
       fetch(RSVP_URL, {
         method: "POST",
         mode: "no-cors",
@@ -198,16 +219,31 @@ document.querySelectorAll('.family-btn').forEach(btn => {
   });
 });
 
+// Friend buttons
+document.getElementById('friendAcceptBtn').onclick = () => submitFriendRSVP("Accepted");
+document.getElementById('friendDeclineBtn').onclick = () => submitFriendRSVP("Declined");
+
+function submitFriendRSVP(status){
+  const name = document.getElementById('guestNameInput').value.trim();
+  if(!name){ alert("Please enter your name."); return; }
+  showThankYouMessage();
+  modal.style.display = 'none';
+  mainContainer.style.display = 'block';
+  fetch(RSVP_URL,{
+    method:"POST",
+    mode:"no-cors",
+    headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({family: "Friend", name:name, response: status})
+  }).catch(()=>console.log("❌ Error submitting RSVP"));
+}
+
 // Floating Thank-You Message
 function showThankYouMessage() {
   const messageBox = document.createElement('div');
   messageBox.className = 'thankyou-box';
   messageBox.innerHTML = '💎 RSVP submitted! <br><span>Thank you so much for your response.</span><span>See you on our Wedding Day!</span>';
   document.body.appendChild(messageBox);
-  setTimeout(() => {
-    messageBox.style.opacity = '0';
-    setTimeout(() => messageBox.remove(), 600);
-  }, 3700);
+  setTimeout(() => { messageBox.style.opacity = '0'; setTimeout(() => messageBox.remove(), 600); }, 3700);
 }
 </script>
 

@@ -149,6 +149,7 @@ const rsvpButtons = document.getElementById('rsvpButtons');
 const RSVP_URL = "https://script.google.com/macros/s/AKfycbyJ7VltJdnx1hA5D7pttpEH7uVr06YvxDnrFM--bP4ZSvaMIpqQMCBfG0BwA_RMLlJThw/exec";
 let currentFamily = '';
 
+// Main buttons
 brideBtn.onclick = () => {
   mainContainer.style.display = 'none';
   brideFamilies.style.display = 'block';
@@ -162,7 +163,7 @@ friendsBtn.onclick = () => {
   rsvpButtons.style.display = 'block';
   document.getElementById('nameInputContainer').style.display = 'block';
   document.getElementById('friendButtonsContainer').style.display = 'block';
-  currentFamily = ''; // leave empty, we'll use name as family
+  currentFamily = ''; 
   document.querySelector('#reservedText p:nth-of-type(2)').textContent = "seat for you!";
 };
 
@@ -171,6 +172,7 @@ const seats = {
   "Eddie's Family": 9, "Ali's Family": 8, "Elizer's Family": 6, "Val's Family": 4, "Vito's Family": 7, "Jun's Family": 6,
   "Evelyn's Family": 4, "Gamay's Family": 17, "Neneng's Family": 11, "Natividad's Family": 14, "Benjamin's Family": 14
 };
+
 document.querySelectorAll('.family-btn').forEach(btn => {
   btn.addEventListener('click', () => {
     currentFamily = btn.getAttribute('data-family');
@@ -178,14 +180,12 @@ document.querySelectorAll('.family-btn').forEach(btn => {
 
     modal.style.display = 'flex';
     rsvpButtons.style.display = 'block';
-    document.getElementById('nameInputContainer').style.display = 'block';
+    document.getElementById('nameInputContainer').style.display = 'none';
     document.getElementById('friendButtonsContainer').style.display = 'none';
 
     document.getElementById('reservedText').innerHTML = `
-      <p style="color:#557a9b;font-size:16px;margin-bottom:5px;">Reserved Available Seats:</p>
-      <h1 id="seatCount">${reservedSeats}</h1>
-      <p style="color:#444;font-size:14px;margin:5px 0 10px;">Final Number of Attendees:</p>
-      <input type="number" id="attendeesInput" placeholder="Enter number"
+      <p style="color:#557a9b;font-size:16px;margin-bottom:5px;">Reserved Available Seats: ${reservedSeats}</p>
+      <input type="number" id="attendeesInput" placeholder="Enter number of attendees"
         style="padding:8px;width:90%;border:1px solid #A8C5DB;border-radius:8px;font-size:16px;text-align:center;">
       <button class="acceptBtn" id="submitAttendeesBtn" style="margin-top:10px;width:50%;font-size:14px;">Submit</button>
     `;
@@ -199,22 +199,26 @@ document.querySelectorAll('.family-btn').forEach(btn => {
         alert(`Please enter a number between 1 and ${reservedSeats}`);
         return;
       }
-      showThankYouMessage();
-      modal.style.display = 'none';
-      brideFamilies.style.display = 'none';
-      mainContainer.style.display = 'block';
 
       fetch(RSVP_URL, {
         method: "POST",
         mode: "no-cors",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ family: currentFamily, response: finalNumber })
+        body: JSON.stringify({
+          family: currentFamily,
+          response: finalNumber
+        })
       }).catch(() => console.log("❌ Error submitting RSVP"));
+
+      showThankYouMessage();
+      modal.style.display = 'none';
+      brideFamilies.style.display = 'none';
+      mainContainer.style.display = 'block';
     };
   });
 });
 
-// Friend Submit button (FIXED)
+// Friend Submit button
 document.getElementById('friendSubmitBtn').onclick = () => {
   const name = document.getElementById('guestNameInput').value.trim();
   if(!name){ alert("Please enter your name."); return; }
@@ -227,7 +231,7 @@ document.getElementById('friendSubmitBtn').onclick = () => {
     mode:"no-cors",
     headers:{"Content-Type":"application/json"},
     body: JSON.stringify({
-      family: name,   // <-- guest's exact name goes here
+      family: name,
       name: name,
       response: "Accepted"
     })

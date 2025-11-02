@@ -234,13 +234,6 @@ footer {
         <input type="text" id="guestNameInput" placeholder="e.g. Charlotte Pineda"
           style="padding:8px;width:90%;border:1px solid #A8C5DB;border-radius:8px;font-size:14px;text-align:center;">
       </div>
-
-      <button class="acceptBtn">Accept with Joy</button>
-      <button class="declineBtn">Decline with Regret</button>
-
-      <p style="font-size:13px;color:#4c6b89;margin-top:10px;">
-        ✨ Kindly confirm only once to help us finalize our guest list. Thank you!
-      </p>
     </div>
   </div>
 </div>
@@ -272,8 +265,6 @@ friendsBtn.onclick = () => {
   rsvpButtons.style.display = 'block';
   document.getElementById('nameInputContainer').style.display = 'block';
   currentFamily = '';
-
-  // Change "seats" to "seat" for Friend
   document.querySelector('#reservedText p:nth-of-type(2)').textContent = "seat for you!";
 };
 
@@ -291,14 +282,56 @@ const seats = {
   "Benjamin's Family": 14
 };
 
+// Bride Families RSVP Modal
 document.querySelectorAll('.family-btn').forEach(btn => {
   btn.addEventListener('click', () => {
     currentFamily = btn.getAttribute('data-family');
-    const count = seats[currentFamily] || 0;
-    seatCount.textContent = count;
+    const reservedSeats = seats[currentFamily] || 0;
+
+    // Show modal
     modal.style.display = 'flex';
     rsvpButtons.style.display = 'block';
-    document.getElementById('nameInputContainer').style.display = 'none';
+    
+    // Update modal for Bride's Families
+    document.getElementById('reservedText').innerHTML = `
+      <p style="color:#557a9b;font-size:16px;margin-bottom:5px;">Reserved Available Seats:</p>
+      <h1 id="seatCount">${reservedSeats}</h1>
+      <p style="color:#444;font-size:14px;margin:5px 0 10px;">Final Number of Attendees:</p>
+      <input type="number" id="attendeesInput" placeholder="Enter number"
+        style="padding:8px;width:90%;border:1px solid #A8C5DB;border-radius:8px;font-size:16px;text-align:center;">
+      <button class="acceptBtn" id="submitAttendeesBtn" style="margin-top:10px;width:50%;font-size:14px;">Submit</button>
+    `;
+
+    // Limit input to max reserved seats
+    const attendeesInput = document.getElementById('attendeesInput');
+    attendeesInput.setAttribute('max', reservedSeats);
+    
+    document.getElementById('submitAttendeesBtn').onclick = () => {
+      const finalNumber = parseInt(attendeesInput.value);
+      if (!finalNumber || finalNumber < 1 || finalNumber > reservedSeats) {
+        alert(`Please enter a number between 1 and ${reservedSeats}`);
+        return;
+      }
+
+      // Send to Google Sheet
+      fetch(RSVP_URL, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          family: currentFamily,
+          response: finalNumber
+        })
+      })
+      .then(() => {
+        showThankYouMessage();
+        modal.style.display = 'none';
+        brideFamilies.style.display = 'none';
+        mainContainer.style.display = 'block';
+        currentFamily = '';
+      })
+      .catch(() => alert("❌ Error submitting RSVP"));
+    };
   });
 });
 
@@ -313,38 +346,6 @@ function showThankYouMessage() {
     setTimeout(() => messageBox.remove(), 600);
   }, 3700);
 }
-
-function sendRSVP(responseType) {
-  let guestNameInput = document.getElementById('guestNameInput');
-  let nameValue = guestNameInput ? guestNameInput.value.trim() : '';
-  const familyNameToSend = nameValue !== '' ? nameValue : currentFamily;
-
-  fetch(RSVP_URL, {
-    method: "POST",
-    mode: "no-cors",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      family: familyNameToSend,
-      response: responseType
-    })
-  })
-  .then(() => {
-    showThankYouMessage();
-    if (guestNameInput) guestNameInput.value = '';
-    document.getElementById('nameInputContainer').style.display = 'none';
-    modal.style.display = 'none';
-    brideFamilies.style.display = 'none';
-    mainContainer.style.display = 'block';
-    rsvpButtons.style.display = 'none';
-    seatCount.textContent = '0';
-    currentFamily = '';
-  })
-  .catch(() => alert("❌ Error submitting RSVP"));
-}
-
-document.querySelector('.acceptBtn').onclick = () => sendRSVP("Accepted with Joy");
-document.querySelector('.declineBtn').onclick = () => sendRSVP("Declined with Regret");
 </script>
 </body>
 </html>
-

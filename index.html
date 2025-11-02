@@ -50,7 +50,7 @@ footer { margin-top: 15px; font-size: 12px; color: #7EA5C9; font-weight: 600; }
 .modal-content { background: rgba(255,255,255,0.88); border-radius: 20px; padding: 30px; max-width: 380px; width: 380px; text-align: center; box-shadow: 0 6px 25px rgba(126, 165, 201, 0.25); border: 2px solid rgba(168, 197, 219, 0.4); transition: all 0.3s ease; }
 #reservedText p { color: #557a9b; font-size: 18px; margin: 0; }
 #seatCount { font-size: 90px; font-weight: bold; color: #7EA5C9; margin: 10px 0; transition: transform 0.3s ease; }
-.acceptBtn, .declineBtn {
+.acceptBtn {
   border: 2px solid transparent;
   padding: 10px 16px;
   border-radius: 8px;
@@ -58,10 +58,10 @@ footer { margin-top: 15px; font-size: 12px; color: #7EA5C9; font-weight: 600; }
   cursor: pointer;
   font-weight: 600;
   transition: all 0.3s ease;
+  background: linear-gradient(90deg, #A8C5DB, #7EA5C9);
+  color: white;
 }
-.acceptBtn { background: linear-gradient(90deg, #A8C5DB, #7EA5C9); color: white; }
-.declineBtn { background: #e3e8ee; color: #4c6b89; }
-.acceptBtn:hover, .declineBtn:hover { box-shadow: 0 0 8px 2px rgba(255,255,255,0.7); transform: scale(1.05); }
+.acceptBtn:hover { box-shadow: 0 0 8px 2px rgba(255,255,255,0.7); transform: scale(1.05); }
 /* Thank-You Popup smaller */
 .thankyou-box {
   position: fixed; top: 50%; left: 50%;
@@ -130,9 +130,9 @@ footer { margin-top: 15px; font-size: 12px; color: #7EA5C9; font-weight: 600; }
         <input type="text" id="guestNameInput" placeholder="e.g. Charlotte Pineda"
           style="padding:8px;width:90%;border:1px solid #A8C5DB;border-radius:8px;font-size:14px;text-align:center;">
       </div>
+      <!-- Changed Friend buttons to single Submit -->
       <div id="friendButtonsContainer" style="display:none; margin-top:10px;">
-        <button class="acceptBtn" id="friendAcceptBtn">Accept with Joy</button>
-        <button class="declineBtn" id="friendDeclineBtn">Decline with Regret</button>
+        <button class="acceptBtn" id="friendSubmitBtn">Submit</button>
       </div>
     </div>
   </div>
@@ -156,6 +156,7 @@ brideBtn.onclick = () => {
 };
 groomBtn.onclick = () => { alert("Currently on process"); };
 
+// Friend of Bride/Groom
 friendsBtn.onclick = () => {
   modal.style.display = 'flex';
   seatCount.textContent = 1;
@@ -166,12 +167,11 @@ friendsBtn.onclick = () => {
   document.querySelector('#reservedText p:nth-of-type(2)').textContent = "seat for you!";
 };
 
+// Bride Families RSVP Modal (unchanged)
 const seats = {
   "Eddie's Family": 9, "Ali's Family": 8, "Elizer's Family": 6, "Val's Family": 4, "Vito's Family": 7, "Jun's Family": 6,
   "Evelyn's Family": 4, "Gamay's Family": 17, "Neneng's Family": 11, "Natividad's Family": 14, "Benjamin's Family": 14
 };
-
-// Bride Families RSVP Modal
 document.querySelectorAll('.family-btn').forEach(btn => {
   btn.addEventListener('click', () => {
     currentFamily = btn.getAttribute('data-family');
@@ -200,7 +200,6 @@ document.querySelectorAll('.family-btn').forEach(btn => {
         alert(`Please enter a number between 1 and ${reservedSeats}`);
         return;
       }
-      // Show Thank You immediately
       showThankYouMessage();
       modal.style.display = 'none';
       brideFamilies.style.display = 'none';
@@ -210,32 +209,27 @@ document.querySelectorAll('.family-btn').forEach(btn => {
         method: "POST",
         mode: "no-cors",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          family: currentFamily,
-          response: finalNumber
-        })
+        body: JSON.stringify({ family: currentFamily, response: finalNumber })
       }).catch(() => console.log("❌ Error submitting RSVP"));
     };
   });
 });
 
-// Friend buttons
-document.getElementById('friendAcceptBtn').onclick = () => submitFriendRSVP("Accepted");
-document.getElementById('friendDeclineBtn').onclick = () => submitFriendRSVP("Declined");
-
-function submitFriendRSVP(status){
+// Friend Submit button
+document.getElementById('friendSubmitBtn').onclick = () => {
   const name = document.getElementById('guestNameInput').value.trim();
   if(!name){ alert("Please enter your name."); return; }
   showThankYouMessage();
   modal.style.display = 'none';
   mainContainer.style.display = 'block';
+
   fetch(RSVP_URL,{
     method:"POST",
     mode:"no-cors",
     headers:{"Content-Type":"application/json"},
-    body: JSON.stringify({family: "Friend", name:name, response: status})
+    body: JSON.stringify({family: "Friend", name:name, response: "Accepted"})
   }).catch(()=>console.log("❌ Error submitting RSVP"));
-}
+};
 
 // Floating Thank-You Message
 function showThankYouMessage() {
@@ -249,4 +243,3 @@ function showThankYouMessage() {
 
 </body>
 </html>
-

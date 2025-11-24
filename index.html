@@ -1,4 +1,5 @@
 <!doctype html>
+
 <html lang="en">
 <head>
 <meta charset="utf-8" />
@@ -118,22 +119,8 @@ footer { margin-top: 15px; font-size: 12px; color: #7EA5C9; font-weight: 600; }
 
 <div id="modal">
   <div class="modal-content">
-    <div id="reservedText">
-      <p>We reserved</p>
-      <h1 id="seatCount">0</h1>
-      <p>seats for you!</p>
-    </div>
-
-    <div id="rsvpButtons" style="margin-top: 15px; display: none;">
-      <div id="nameInputContainer" style="display:none; margin-bottom:10px;">
-        <p style="font-size:14px;color:#555;margin-bottom:5px;">Please enter your name:</p>
-        <input type="text" id="guestNameInput" placeholder="e.g. Charlotte Pineda"
-          style="padding:8px;width:90%;border:1px solid #A8C5DB;border-radius:8px;font-size:14px;text-align:center;">
-      </div>
-      <div id="friendButtonsContainer" style="display:none; margin-top:10px;">
-        <button class="acceptBtn" id="friendSubmitBtn">Submit</button>
-      </div>
-    </div>
+    <div id="reservedText"></div>
+    <div id="rsvpButtons" style="margin-top: 15px; display: none;"></div>
   </div>
 </div>
 
@@ -144,99 +131,114 @@ const friendsBtn = document.getElementById('friendsBtn');
 const brideFamilies = document.getElementById('brideFamilies');
 const mainContainer = document.getElementById('mainContainer');
 const modal = document.getElementById('modal');
-const seatCount = document.getElementById('seatCount');
 const rsvpButtons = document.getElementById('rsvpButtons');
 const RSVP_URL = "https://script.google.com/macros/s/AKfycbyJ7VltJdnx1hA5D7pttpEH7uVr06YvxDnrFM--bP4ZSvaMIpqQMCBfG0BwA_RMLlJThw/exec";
 let currentFamily = '';
 
-// Main buttons
 brideBtn.onclick = () => {
   mainContainer.style.display = 'none';
   brideFamilies.style.display = 'block';
 };
+
 groomBtn.onclick = () => { alert("Currently on process"); };
 
-// Friend of Bride/Groom
-friendsBtn.onclick = () => {
-  modal.style.display = 'flex';
-  seatCount.textContent = 1;
-  rsvpButtons.style.display = 'block';
-  document.getElementById('nameInputContainer').style.display = 'block';
-  document.getElementById('friendButtonsContainer').style.display = 'block';
-  currentFamily = ''; 
-  document.querySelector('#reservedText p:nth-of-type(2)').textContent = "seat for you!";
-};
-
-// Bride Families RSVP Modal
+// Final seat list INCLUDING sub-families
 const seats = {
-  "Eddie's Family": 9, "Ali's Family": 8, "Elizer's Family": 6, "Val's Family": 4, "Vito's Family": 7, "Jun's Family": 6,
-  "Evelyn's Family": 4, "Gamay's Family": 17, "Neneng's Family": 11, "Natividad's Family": 14, "Benjamin's Family": 14
+  "Eddie's Family": 9,
+  "Ali's Family": 8,
+  "Elizer's Family": 6,
+  "Val's Family": 4,
+  "Vito's Family": 7,
+  "Jun's Family": 6,
+  "Evelyn's Family": 4,
+  "Gamay's Family": 17,
+  "Benjamin's Family": 14,
+
+  // Natividad sub-families
+  "Jonalyn's Family": 5,
+  "Ma. Luisa's Family": 5,
+  "Jonathan's Family": 3,
+
+  // Neneng sub-families
+  "Girlie's Family": 6,
+  "Gina Mea's Family": 4,
+  "Gerald's Family": 2
 };
 
+// clicking a family
 document.querySelectorAll('.family-btn').forEach(btn => {
   btn.addEventListener('click', () => {
     currentFamily = btn.getAttribute('data-family');
-    const reservedSeats = seats[currentFamily] || 0;
 
-    modal.style.display = 'flex';
-    rsvpButtons.style.display = 'block';
-    document.getElementById('nameInputContainer').style.display = 'none';
-    document.getElementById('friendButtonsContainer').style.display = 'none';
+    // If Natividad -> Show submenu
+    if (currentFamily === "Natividad's Family") {
+      showSubmenu(["Jonalyn's Family","Ma. Luisa's Family","Jonathan's Family"]);
+      return;
+    }
 
-    document.getElementById('reservedText').innerHTML = `
-      <p style="color:#557a9b;font-size:16px;margin-bottom:5px;">Reserved Available Seats: ${reservedSeats}</p>
-      <input type="number" id="attendeesInput" placeholder="Enter number of attendees"
-        style="padding:8px;width:90%;border:1px solid #A8C5DB;border-radius:8px;font-size:16px;text-align:center;">
-      <button class="acceptBtn" id="submitAttendeesBtn" style="margin-top:10px;width:50%;font-size:14px;">Submit</button>
-    `;
+    // If Neneng -> Show submenu
+    if (currentFamily === "Neneng's Family") {
+      showSubmenu(["Girlie's Family","Gina Mea's Family","Gerald's Family"]);
+      return;
+    }
 
-    const attendeesInput = document.getElementById('attendeesInput');
-    attendeesInput.setAttribute('max', reservedSeats);
-
-    document.getElementById('submitAttendeesBtn').onclick = () => {
-      const finalNumber = parseInt(attendeesInput.value);
-      if (!finalNumber || finalNumber < 1 || finalNumber > reservedSeats) {
-        alert(`Please enter a number between 1 and ${reservedSeats}`);
-        return;
-      }
-
-      fetch(RSVP_URL, {
-        method: "POST",
-        mode: "no-cors",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          family: currentFamily,
-          response: finalNumber
-        })
-      }).catch(() => console.log("❌ Error submitting RSVP"));
-
-      showThankYouMessage();
-      modal.style.display = 'none';
-      brideFamilies.style.display = 'none';
-      mainContainer.style.display = 'block';
-    };
+    openSeatInput(currentFamily);
   });
 });
 
-// Friend Submit button
-document.getElementById('friendSubmitBtn').onclick = () => {
-  const name = document.getElementById('guestNameInput').value.trim();
-  if(!name){ alert("Please enter your name."); return; }
-  showThankYouMessage();
-  modal.style.display = 'none';
-  mainContainer.style.display = 'block';
+// Show submenu function
+function showSubmenu(list){
+  modal.style.display = 'flex';
+  document.getElementById('reservedText').innerHTML = `
+    <h3 style="color:#557a9b;">Choose which family:</h3>
+    ${ list.map(name => `<button class="acceptBtn subFamily" data-family="${name}">${name}</button>`).join('') }
+  `;
 
-  fetch(RSVP_URL,{
-    method:"POST",
-    mode:"no-cors",
-    headers:{"Content-Type":"application/json"},
-    body: JSON.stringify({
-      family: name,
-      name: name,
-      response: "Accepted"
-    })
-  }).catch(()=>console.log("❌ Error submitting RSVP"));
-};
+  document.querySelectorAll('.subFamily').forEach(b => {
+    b.onclick = () => openSeatInput(b.getAttribute('data-family'));
+  });
+}
+
+// seat input modal
+function openSeatInput(family){
+  const reservedSeats = seats[family] || 0;
+
+  modal.style.display = 'flex';
+  document.getElementById('reservedText').innerHTML = `
+    <p style="color:#557a9b;font-size:16px;margin-bottom:5px;">
+      Reserved Available Seats: ${reservedSeats}
+    </p>
+    <input type="number" id="attendeesInput" placeholder="Enter number of attendees"
+      style="padding:8px;width:90%;border:1px solid #A8C5DB;border-radius:8px;font-size:16px;text-align:center;">
+    <button class="acceptBtn" id="submitAttendeesBtn" style="margin-top:10px;width:50%;font-size:14px;">Submit</button>
+  `;
+
+  const attendeesInput = document.getElementById('attendeesInput');
+  attendeesInput.setAttribute('max', reservedSeats);
+
+  document.getElementById('submitAttendeesBtn').onclick = () => {
+    const finalNumber = parseInt(attendeesInput.value);
+    if (!finalNumber || finalNumber < 1 || finalNumber > reservedSeats) {
+      alert(`Please enter a number between 1 and ${reservedSeats}`);
+      return;
+    }
+
+    fetch(RSVP_URL, {
+      method: "POST",
+      mode: "no-cors",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        family: family,
+        response: finalNumber
+      })
+    });
+
+    showThankYouMessage();
+    modal.style.display = 'none';
+    brideFamilies.style.display = 'none';
+    mainContainer.style.display = 'block';
+  };
+}
 
 // Floating Thank-You Message
 function showThankYouMessage() {
@@ -244,7 +246,10 @@ function showThankYouMessage() {
   messageBox.className = 'thankyou-box';
   messageBox.innerHTML = '💎 RSVP submitted! <br><span>Thank you so much for your response.</span><span>See you on our Wedding Day!</span>';
   document.body.appendChild(messageBox);
-  setTimeout(() => { messageBox.style.opacity = '0'; setTimeout(() => messageBox.remove(), 600); }, 3700);
+  setTimeout(() => {
+    messageBox.style.opacity = '0';
+    setTimeout(() => messageBox.remove(), 600);
+  }, 3700);
 }
 </script>
 

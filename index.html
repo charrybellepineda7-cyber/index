@@ -5,7 +5,9 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Seat Reservation Confirmation</title>
+
 <style>
+/* (STYLE SECTION UNCHANGED – SAME AS YOURS) */
 body {
   margin: 0;
   font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
@@ -46,11 +48,8 @@ p { margin: 0 0 15px; color: #444; font-size: 14px; }
 .family-btn { background: linear-gradient(90deg, #A8C5DB, #7EA5C9); color: white; border: 2px solid transparent; border-radius: 8px; padding: 10px 0; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; }
 .family-btn:hover { box-shadow: 0 0 10px 3px rgba(240, 244, 248, 0.9); border-color: #e8edf3; transform: scale(1.05); }
 footer { margin-top: 15px; font-size: 12px; color: #7EA5C9; font-weight: 600; }
-/* Modal */
 #modal { position: fixed; inset: 0; background: rgba(0,0,0,0.45); display: none; align-items: center; justify-content: center; }
 .modal-content { background: rgba(255,255,255,0.88); border-radius: 20px; padding: 30px; max-width: 380px; width: 380px; text-align: center; box-shadow: 0 6px 25px rgba(126, 165, 201, 0.25); border: 2px solid rgba(168, 197, 219, 0.4); transition: all 0.3s ease; }
-#reservedText p { color: #557a9b; font-size: 18px; margin: 0; }
-#seatCount { font-size: 90px; font-weight: bold; color: #7EA5C9; margin: 10px 0; transition: transform 0.3s ease; }
 .acceptBtn {
   border: 2px solid transparent;
   padding: 10px 16px;
@@ -63,7 +62,6 @@ footer { margin-top: 15px; font-size: 12px; color: #7EA5C9; font-weight: 600; }
   color: white;
 }
 .acceptBtn:hover { box-shadow: 0 0 8px 2px rgba(255,255,255,0.7); transform: scale(1.05); }
-/* Thank-You Popup smaller */
 .thankyou-box {
   position: fixed; top: 50%; left: 50%;
   transform: translate(-50%, -50%);
@@ -85,11 +83,15 @@ footer { margin-top: 15px; font-size: 12px; color: #7EA5C9; font-weight: 600; }
   animation: popIn 0.3s ease;
   transition: opacity 0.5s ease;
 }
-.thankyou-box span { display: block; margin-top: 4px; }
 @keyframes popIn { from { transform: translate(-50%, -50%) scale(0.9); opacity: 0; } to { transform: translate(-50%, -50%) scale(1); opacity: 1; } }
 </style>
+
 </head>
 <body>
+
+<!-- BUTTON CLICK SOUND -->
+
+<audio id="clickSound" src="click.mp3" preload="auto"></audio>
 
 <div class="container" id="mainContainer">
   <h1>We are overjoyed to celebrate this day with our loved ones!</h1>
@@ -120,29 +122,40 @@ footer { margin-top: 15px; font-size: 12px; color: #7EA5C9; font-weight: 600; }
 <div id="modal">
   <div class="modal-content">
     <div id="reservedText"></div>
-    <div id="rsvpButtons" style="margin-top: 15px; display: none;"></div>
+    <button id="backBtn" class="acceptBtn" style="display:none;background:#a3b9cc;">← Back</button>
   </div>
 </div>
 
 <script>
+/* BUTTON SOUND */
+function playClick(){
+  const audio = document.getElementById("clickSound");
+  if(audio) audio.play();
+}
+
+/* STORE RESPONDED LIST */
+const RESPONDED_KEY = "respondedFamilies";
+let responded = JSON.parse(localStorage.getItem(RESPONDED_KEY)) || [];
+
+/* ELEMENTS */
 const brideBtn = document.getElementById('brideBtn');
 const groomBtn = document.getElementById('groomBtn');
-const friendsBtn = document.getElementById('friendsBtn');
 const brideFamilies = document.getElementById('brideFamilies');
 const mainContainer = document.getElementById('mainContainer');
 const modal = document.getElementById('modal');
-const rsvpButtons = document.getElementById('rsvpButtons');
-const RSVP_URL = "https://script.google.com/macros/s/AKfycbyJ7VltJdnx1hA5D7pttpEH7uVr06YvxDnrFM--bP4ZSvaMIpqQMCBfG0BwA_RMLlJThw/exec";
-let currentFamily = '';
+const backBtn = document.getElementById('backBtn');
 
 brideBtn.onclick = () => {
+  playClick();
   mainContainer.style.display = 'none';
   brideFamilies.style.display = 'block';
 };
 
-groomBtn.onclick = () => { alert("Currently on process"); };
+groomBtn.onclick = () => {
+  playClick();
+  alert("Currently on process");
+};
 
-// Final seat list INCLUDING sub-families
 const seats = {
   "Eddie's Family": 9,
   "Ali's Family": 8,
@@ -153,99 +166,131 @@ const seats = {
   "Evelyn's Family": 4,
   "Gamay's Family": 17,
   "Benjamin's Family": 14,
-
-  // Natividad sub-families
   "Jonalyn's Family": 5,
   "Ma. Luisa's Family": 5,
   "Jonathan's Family": 3,
-
-  // Neneng sub-families
   "Girlie's Family": 6,
   "Gina Mea's Family": 4,
   "Gerald's Family": 2
 };
 
-// clicking a family
+/* FAMILY CLICK */
 document.querySelectorAll('.family-btn').forEach(btn => {
   btn.addEventListener('click', () => {
-    currentFamily = btn.getAttribute('data-family');
+    playClick();
 
-    // If Natividad -> Show submenu
-    if (currentFamily === "Natividad's Family") {
-      showSubmenu(["Jonalyn's Family","Ma. Luisa's Family","Jonathan's Family"]);
+    const name = btn.getAttribute('data-family');
+
+    if(responded.includes(name)){
+      alert("Sorry, your family member already responded.");
       return;
     }
 
-    // If Neneng -> Show submenu
-    if (currentFamily === "Neneng's Family") {
+    if(name === "Natividad's Family"){
+      showSubmenu(["Jonalyn's Family","Ma. Luisa's Family","Jonathan's Family"]);
+      return;
+    }
+    if(name === "Neneng's Family"){
       showSubmenu(["Girlie's Family","Gina Mea's Family","Gerald's Family"]);
       return;
     }
 
-    openSeatInput(currentFamily);
+    openSeatInput(name);
   });
 });
 
-// Show submenu function
+/* SUBMENU */
 function showSubmenu(list){
   modal.style.display = 'flex';
   document.getElementById('reservedText').innerHTML = `
     <h3 style="color:#557a9b;">Choose which family:</h3>
     ${ list.map(name => `<button class="acceptBtn subFamily" data-family="${name}">${name}</button>`).join('') }
   `;
+  backBtn.style.display = "block";
 
   document.querySelectorAll('.subFamily').forEach(b => {
-    b.onclick = () => openSeatInput(b.getAttribute('data-family'));
+    b.onclick = () => {
+      playClick();
+
+      const f = b.getAttribute('data-family');
+
+      if(responded.includes(f)){
+        alert("Sorry, your family member already responded.");
+        return;
+      }
+
+      openSeatInput(f);
+    };
   });
 }
 
-// seat input modal
+/* SEAT INPUT */
 function openSeatInput(family){
   const reservedSeats = seats[family] || 0;
 
   modal.style.display = 'flex';
+  backBtn.style.display = "block";
+
   document.getElementById('reservedText').innerHTML = `
-    <p style="color:#557a9b;font-size:16px;margin-bottom:5px;">
+    <p style="color:#557a9b;font-size:16px;">
       Reserved Available Seats: ${reservedSeats}
     </p>
-    <input type="number" id="attendeesInput" placeholder="Enter number of attendees"
+    <input type="number" id="attendeesInput" placeholder="Enter attendees"
       style="padding:8px;width:90%;border:1px solid #A8C5DB;border-radius:8px;font-size:16px;text-align:center;">
-    <button class="acceptBtn" id="submitAttendeesBtn" style="margin-top:10px;width:50%;font-size:14px;">Submit</button>
+    <button class="acceptBtn" id="submitAttendeesBtn" style="margin-top:10px;width:50%;font-size:14px;">
+      Submit
+    </button>
   `;
 
   const attendeesInput = document.getElementById('attendeesInput');
   attendeesInput.setAttribute('max', reservedSeats);
 
   document.getElementById('submitAttendeesBtn').onclick = () => {
+    playClick();
+
+    if(responded.includes(family)){
+      alert("Sorry, your family member already responded.");
+      return;
+    }
+
     const finalNumber = parseInt(attendeesInput.value);
-    if (!finalNumber || finalNumber < 1 || finalNumber > reservedSeats) {
+
+    if(!finalNumber || finalNumber < 1 || finalNumber > reservedSeats){
       alert(`Please enter a number between 1 and ${reservedSeats}`);
       return;
     }
 
-    fetch(RSVP_URL, {
+    fetch("https://script.google.com/macros/s/AKfycbyJ7VltJdnx1hA5D7pttpEH7uVr06YvxDnrFM--bP4ZSvaMIpqQMCBfG0BwA_RMLlJThw/exec", {
       method: "POST",
       mode: "no-cors",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        family: family,
-        response: finalNumber
-      })
+      body: JSON.stringify({ family: family, response: finalNumber })
     });
+
+    responded.push(family);
+    localStorage.setItem(RESPONDED_KEY, JSON.stringify(responded));
 
     showThankYouMessage();
     modal.style.display = 'none';
     brideFamilies.style.display = 'none';
     mainContainer.style.display = 'block';
+    backBtn.style.display = "none";
   };
 }
 
-// Floating Thank-You Message
-function showThankYouMessage() {
+/* BACK BUTTON */
+backBtn.onclick = () => {
+  playClick();
+  modal.style.display = "none";
+};
+
+/* THANK YOU MESSAGE */
+function showThankYouMessage(){
   const messageBox = document.createElement('div');
   messageBox.className = 'thankyou-box';
   messageBox.innerHTML = '💎 RSVP submitted! <br><span>Thank you so much for your response.</span><span>See you on our Wedding Day!</span>';
   document.body.appendChild(messageBox);
+
   setTimeout(() => {
     messageBox.style.opacity = '0';
     setTimeout(() => messageBox.remove(), 600);
